@@ -21,10 +21,9 @@ func specificSpinnet(w http.ResponseWriter, r *http.Request){
 }
 
 func createSnippet(w http.ResponseWriter, r *http.Request){
-	if r.Method != "POST" {
-		w.Header().Set("ALLOW", "POST")
-		w.WriteHeader(405)
-		w.Write([]byte("Method not allowed"))
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", "POST")
+		http.Error(w,"Method not allowed",http.StatusMethodNotAllowed)
 		return	
 	}
 
