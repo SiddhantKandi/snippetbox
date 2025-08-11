@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 	"log"
+	"fmt"
+	"strconv"
 )
 
 func home(w http.ResponseWriter, r *http.Request){
@@ -16,9 +18,20 @@ func home(w http.ResponseWriter, r *http.Request){
 	w.Write([]byte("Hello from SnippetBox"))
 }
 
-func specificSpinnet(w http.ResponseWriter, r *http.Request){
-	w.Write([]byte("Showing a specific snippet"))
+func snippetView(w http.ResponseWriter, r *http.Request) {
+	id,err := strconv.Atoi(r.URL.Query().Get("id"))
+
+	if err != nil || id < 1 {
+		http.NotFound(w, r)
+		return
+	}
+
+	fmt.Fprintf(w, "Display a specific snippet %d",id)
 }
+
+// func specificSpinnet(w http.ResponseWriter, r *http.Request){
+// 	w.Write([]byte("Showing a specific snippet"))
+// }
 
 func createSnippet(w http.ResponseWriter, r *http.Request){
 	if r.Method != http.MethodPost {
@@ -35,7 +48,7 @@ func main(){
 	//HTTP Request Multiplier(Router).Dispatches the incoming requests to the matching URL path
 	mux := http.NewServeMux()
 	mux.HandleFunc("/",home)
-	mux.HandleFunc("/snippet/view",specificSpinnet)
+	mux.HandleFunc("/snippet/view",snippetView)
 	mux.HandleFunc("/snippet/create",createSnippet)
 
 
